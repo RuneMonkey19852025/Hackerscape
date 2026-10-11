@@ -166,6 +166,34 @@ itemDef.itemActions[1] = "Wear";
 itemDef.description = "Some Glaiven boots.";
 break;
 
+case 20100:
+itemDef.name = "Light saber";
+itemDef.itemActions = new String[5];
+itemDef.itemActions[1] = "Wield";
+itemDef.itemActions[4] = "Drop";
+itemDef.modelid = 71769;
+itemDef.stackable = false;
+itemDef.modelRotationX = 1985;
+itemDef.modelRotationY = 228;
+itemDef.modelZoom = 2000;
+itemDef.anInt165 = 72135;
+itemDef.anInt200 = 72135;
+itemDef.modelOffset1 = 5;
+itemDef.modelOffset2 = -55;
+// Recolor: hilt to metallic grey, blade to glowing cyan "plasma".
+itemDef.editedModelColor = new int[4];
+itemDef.newModelColor = new int[4];
+itemDef.editedModelColor[0] = 926;   // godsword blade steel
+itemDef.newModelColor[0] = 8128;     // bright cyan-white plasma
+itemDef.editedModelColor[1] = 61;    // blade shadow tone
+itemDef.newModelColor[1] = 63481;    // pale cyan glow
+itemDef.editedModelColor[2] = 61;    // secondary dark tone
+itemDef.newModelColor[2] = 10676;    // electric blue
+itemDef.editedModelColor[3] = 10541; // gold hilt trim
+itemDef.newModelColor[3] = 33;       // dark grey hilt
+itemDef.description = "An elegant weapon for a more civilized age. Glows with plasma energy.";
+break;
+
 case 962:
 itemDef.itemActions = new String[5];
 itemDef.itemActions[0] = "Open";

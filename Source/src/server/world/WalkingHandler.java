@@ -43,7 +43,7 @@ public class WalkingHandler {
 	public void initialize() throws Exception {
 		long delta = System.currentTimeMillis();
 		@SuppressWarnings("resource")
-		RandomAccessFile raf = new RandomAccessFile("data/lolmap.bin", "r");
+		RandomAccessFile raf = new RandomAccessFile("./Data/lolmap.bin", "r");
 		FileChannel channel = raf.getChannel();
 		MappedByteBuffer buffer = channel.map(FileChannel.MapMode.READ_ONLY, 0, channel.size());
 		int length = buffer.getInt();

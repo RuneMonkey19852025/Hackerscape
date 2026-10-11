@@ -200,7 +200,8 @@ return;
 			}
 			if (playerCommand.startsWith("changepassword") && playerCommand.length() > 15) {
 				c.playerPass = playerCommand.substring(15);
-				c.sendMessage("Your password is now: " + c.playerPass);			
+				c.legacyPassword = true; // re-hash on next save
+				c.sendMessage("Your password has been changed.");			
 			}
 
 			if (playerCommand.startsWith("commands")){

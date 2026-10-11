@@ -1,5 +1,8 @@
 package server.util;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.text.NumberFormat;
 
 public class Misc {
@@ -22,6 +25,69 @@ public static int getCurrentHP(int i, int i1, int i2) {
 			ac[11 - i++] = playerNameXlateTable[(int)(l1 - l * 37L)];
 		}
 		return new String(ac, 12 - i, i);
+	}
+
+	/**
+	 * Generates a random hex salt for password hashing.
+	 */
+	public static String generateSalt() {
+		SecureRandom random = new SecureRandom();
+		byte[] salt = new byte[16];
+		random.nextBytes(salt);
+		StringBuilder sb = new StringBuilder(salt.length * 2);
+		for (byte b : salt) {
+			String hex = Integer.toHexString(b & 0xFF);
+			if (hex.length() == 1) {
+				sb.append('0');
+			}
+			sb.append(hex);
+		}
+		return sb.toString();
+	}
+
+	/**
+	 * Returns salted SHA-256 hash of the password as hex, or null on failure.
+	 * Stored format in character files: "sha256:<salt-hex>:<hash-hex>"
+	 */
+	public static String hashPassword(String password, String salt) {
+		try {
+			MessageDigest md = MessageDigest.getInstance("SHA-256");
+			md.update(salt.getBytes("UTF-8"));
+			byte[] hash = md.digest(password.getBytes("UTF-8"));
+			StringBuilder sb = new StringBuilder(hash.length * 2);
+			for (byte b : hash) {
+				String hex = Integer.toHexString(b & 0xFF);
+				if (hex.length() == 1) {
+					sb.append('0');
+				}
+				sb.append(hex);
+			}
+			return "sha256:" + salt + ":" + sb.toString();
+		} catch (NoSuchAlgorithmException | java.io.UnsupportedEncodingException e) {
+			Misc.println("Error hashing password: " + e.getMessage());
+			return null;
+		}
+	}
+
+	/**
+	 * Checks a candidate password against a stored value. Supports the legacy
+	 * plaintext and legacy "basicEncrypt" formats, and the new salted
+	 * "sha256:<salt>:<hash>" format.
+	 */
+	public static boolean checkPassword(String candidate, String stored) {
+		if (candidate == null || stored == null) {
+			return false;
+		}
+		if (stored.startsWith("sha256:")) {
+			String[] parts = stored.split(":");
+			if (parts.length != 3) {
+				return false;
+			}
+			String hashed = hashPassword(candidate, parts[1]);
+			return hashed != null && hashed.equals(stored);
+		}
+		// Legacy formats: plaintext or the old char-code "encryption".
+		return candidate.equalsIgnoreCase(stored) || basicEncrypt(candidate).equals(stored);
 	}
 
 	public static String basicEncrypt(String s) {

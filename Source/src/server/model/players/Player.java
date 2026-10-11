@@ -963,6 +963,7 @@ public boolean inMulti() {
 	public String playerName = null;
 	public String playerName2 = null;
 	public String playerPass = null;			
+	public boolean legacyPassword = false;	// true when stored password is plaintext/old hash and needs upgrading on save
 	public int playerRights;		
 	public PlayerHandler handler = null;
 	public int playerItems[] = new int[28];

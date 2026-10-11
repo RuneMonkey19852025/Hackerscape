@@ -136,24 +136,16 @@ import java.net.*;
 
     
 
-    	public static String findcachedir() {
-        String as[] = {"C:/"};
-        if(storeid < 32 || storeid > 34)
-            storeid = 32;
-        String s = "Hackerscape.cache";
-        for(int i = 0; i < as.length; i++)
-            try {
-                String s1 = as[i];
-                if(s1.length() > 0) {
-                    File file = new File(s1);
-                    if(!file.exists())
-                        continue;
-                }
-                File file1 = new File(s1 + s);
-                if(file1.exists() || file1.mkdir())
-                    return s1 + s + "/";
-            }
-            catch(Exception _ex) { }
+    public static String findcachedir() {
+        // Linux/macOS port: use home dir instead of "C:/".
+        String home = System.getProperty("user.home", ".");
+        String s = home + "/.hackerscape/Hackerscape.cache";
+        try {
+            File file1 = new File(s);
+            if(file1.exists() || file1.mkdirs())
+                return s + "/";
+        }
+        catch(Exception _ex) { }
         return null;
     }
 

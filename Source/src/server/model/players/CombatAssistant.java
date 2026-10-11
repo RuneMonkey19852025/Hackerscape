@@ -776,12 +776,19 @@ c.degradeSHelm();
                         case 5:
                         c.clawDelay = 2;
                         //c.clawDamage = Misc.random(calculateMeleeMaxHit());
-                        break;
-
-                        case 7:
+                        break;                        case 7:
                         c.dbowDelay = 6;
                         break;
-		
+			case 8: // light saber plasma burn vs npcs
+			if (damage > 0) {
+				if (Server.npcHandler.npcs[i].freezeTimer <= 0) {
+					Server.npcHandler.npcs[i].freezeTimer = 20;
+				}
+				Server.npcHandler.npcs[i].gfx0(398);
+				c.sendMessage("Your saber's plasma sears the creature.");
+			}
+			break;
+
 		}
 		switch(damageMask) {
 			case 1:
@@ -2359,6 +2366,7 @@ public void appendMultiBarrage(int playerId, boolean splashed) {
 					o.gfx0(369);
 					o.sendMessage("You have been frozen.");
 					o.frozenBy = c.playerId;
+
 					o.stopMovement();
 					c.sendMessage("You freeze your enemy.");
 				}		
@@ -2389,6 +2397,35 @@ public void appendMultiBarrage(int playerId, boolean splashed) {
                         case 6:
                         o.vestaDelay = 12;
                         break;
+			case 8: // light saber plasma burn
+			if (damage > 0) {
+				if (o.freezeTimer <= 0) {
+					o.freezeTimer = 20;
+					o.frozenBy = c.playerId;
+				}
+				o.gfx0(398);
+				o.sendMessage("The plasma blade burns through your defences!");
+				c.sendMessage("Your saber's plasma sears your enemy.");
+				if (o.prayerActive[16] || o.prayerActive[17] || o.prayerActive[18] || o.curseActive[7] || o.curseActive[8] || o.curseActive[9]) {
+					o.headIcon = -1;
+					o.getPA().sendFrame36(c.PRAYER_GLOW[16], 0);
+					o.getPA().sendFrame36(c.PRAYER_GLOW[17], 0);
+					o.getPA().sendFrame36(c.PRAYER_GLOW[18], 0);
+					o.getPA().sendFrame36(c.CURSE_GLOW[7], 0);
+					o.getPA().sendFrame36(c.CURSE_GLOW[8], 0);
+					o.getPA().sendFrame36(c.CURSE_GLOW[9], 0);
+					o.stopPrayerDelay = System.currentTimeMillis();
+					o.prayerActive[16] = false;
+					o.prayerActive[17] = false;
+					o.prayerActive[18] = false;
+					o.curseActive[7] = false;
+					o.curseActive[8] = false;
+					o.curseActive[9] = false;
+					o.getPA().requestUpdates();
+					o.sendMessage("Your prayers have been extinguished!");
+				}
+			}
+			break;
 
 		}
 		c.specEffect = 0;
@@ -2606,6 +2643,17 @@ public void appendMultiBarrage(int playerId, boolean splashed) {
 						c.playerLevel[3] += damage;
 					c.getPA().refreshSkill(3);
 				}
+			break;
+			case 8: // light saber plasma burn (npc-style handler path)
+			if (damage > 0 && o != null) {
+				if (o.freezeTimer <= 0) {
+					o.freezeTimer = 20;
+					o.frozenBy = c.playerId;
+				}
+				o.gfx0(398);
+				o.sendMessage("The plasma blade burns through your defences!");
+				c.sendMessage("Your saber's plasma sears your enemy.");
+			}
 			break;
 		}
 		c.specEffect = 0;
@@ -3149,13 +3197,22 @@ break;
 			c.hitDelay = getHitDelay(c.getItems().getItemName(c.playerEquipment[c.playerWeapon]).toLowerCase());
 			break;
 			
-				case 11694: // ags
-				c.startAnimation(7074);
-				c.specDamage = 1.70;
-				c.specAccuracy = 7.75;
-				c.gfx0(1222);
-				c.hitDelay = getHitDelay(c.getItems().getItemName(c.playerEquipment[c.playerWeapon]).toLowerCase());
-				break;
+			case 20100: // light saber
+			c.startAnimation(7074);
+			c.gfx0(1222);
+			c.specDamage = 1.45;
+			c.specAccuracy = 2.10;
+			c.hitDelay = getHitDelay(c.getItems().getItemName(c.playerEquipment[c.playerWeapon]).toLowerCase());
+			c.specEffect = 8; // plasma burn: freeze target + burn prayer
+			break;
+
+			case 11694: // ags
+			c.startAnimation(7074);
+			c.specDamage = 1.70;
+			c.specAccuracy = 7.75;
+			c.gfx0(1222);
+			c.hitDelay = getHitDelay(c.getItems().getItemName(c.playerEquipment[c.playerWeapon]).toLowerCase());
+			break;
 				
 				case 19780:
 				c.gfx100(1224);

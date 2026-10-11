@@ -57,11 +57,15 @@ public class PlayerSave
 				token2 = line.substring(spot + 1);
 				token2 = token2.trim();
 				token3 = token2.split("\t");
-				switch (ReadMode) {
-				case 1:
+				switch (ReadMode) {				 case 1:
 					 if (token.equals("character-password")) {
-						if (playerPass.equalsIgnoreCase(token2) || Misc.basicEncrypt(playerPass).equals(token2)) {
+						if (Misc.checkPassword(playerPass, token2)) {
 							playerPass = token2;
+							// Mark legacy (plaintext/old hash) passwords so they are
+							// upgraded to salted SHA-256 on next save.
+							if (!token2.startsWith("sha256:")) {
+								p.legacyPassword = true;
+							}
 						} else {
 							return 3;
 						}
@@ -331,7 +335,18 @@ p.lastConnectedFrom.add(token2);
 			characterfile.write(p.playerName, 0, p.playerName.length());
 			characterfile.newLine();
 			characterfile.write("character-password = ", 0, 21);
-			characterfile.write(p.playerPass, 0, p.playerPass.length());
+			String passwordToWrite = p.playerPass;
+			if (p.legacyPassword || !passwordToWrite.startsWith("sha256:")) {
+				passwordToWrite = Misc.hashPassword(passwordToWrite, Misc.generateSalt());
+			}
+			if (passwordToWrite == null) {
+				// Hashing failed; keep whatever was there before rather than
+				// corrupting the login data.
+				passwordToWrite = p.playerPass;
+			}
+			p.playerPass = passwordToWrite;
+			p.legacyPassword = false;
+			characterfile.write(passwordToWrite, 0, passwordToWrite.length());
 			characterfile.newLine();
 for (int i = 0; i < p.lastConnectedFrom.size(); i++) {
 characterfile.write("connected-from = ", 0, 17);

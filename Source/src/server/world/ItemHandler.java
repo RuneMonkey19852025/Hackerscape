@@ -321,7 +321,7 @@ public class ItemHandler {
 	public void loadItemPrices(String filename) {
 		try {
 			@SuppressWarnings("resource")
-			Scanner s = new Scanner(new File("./data/cfg/" + filename));
+			Scanner s = new Scanner(new File("./Data/cfg/" + filename));
 			while (s.hasNextLine()) {
 				String[] line = s.nextLine().split(" ");
 				ItemList temp = getItemList(Integer.parseInt(line[0]));

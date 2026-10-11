@@ -24,11 +24,12 @@ This is a list of things that are either broken, have an issue or will be Implem
 * Pest Control
      * Pest control needs a bit of work, very lazy version was included in the source. Portals need to be added to their respective locations and NPC Summoning needs to be added. 
 * Summoning Skill
-	 * Currently summoning does work, but you are unable to dismiss your pet. There is also a bit of a glitch where if you "Toggle" the Summon option on a pet it will no longer be attached to you after a teleport. 
-* Passwords
-     * Currently passwords are saved in plaintext, will need to implement some sort of salted hashing function.
+	 * Currently summoning does work, but you are unable to dismiss your pet. There is also a bit of a glitch where if you "Toggle" the Summon option on a pet it will no longer be attached to you after a teleport.
+* Passwords (FIXED)
+	 * Passwords used to be saved in plaintext. They are now stored as salted SHA-256 hashes in the format "sha256:<salt>:<hash>". Existing plaintext passwords are automatically re-hashed the next time that character is saved, and legacy passwords still log in fine in the meantime. Note: the admin "getpass" command now only reveals the stored hash.
 		 
 		  
+
 This list will surely grow as I work on the source, there is a lot to be done.
 
 # New Content
